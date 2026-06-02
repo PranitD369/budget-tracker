@@ -125,6 +125,7 @@ export function FamilyProvider({ children }) {
       name,
       createdBy: currentUser.uid,
       inviteCode: code,
+      currency: 'USD',
       createdAt: serverTimestamp(),
     })
     const memberData = {
@@ -164,15 +165,46 @@ export function FamilyProvider({ children }) {
     await deleteDoc(doc(db, 'families', familyId, 'expenses', expenseId))
   }, [familyId])
 
+  const updateCurrency = useCallback(async (currency) => {
+    if (!familyId) return
+    await updateDoc(doc(db, 'families', familyId), { currency })
+  }, [familyId])
+
   const allCategories = [...DEFAULT_CATEGORIES.filter(d =>
     !categories.some(c => c.name === d.name)
   ), ...categories]
+
+  const currency = familyDoc?.currency || 'USD'
+
+  // Shared currency formatter — every page renders money through this so the
+  // family's chosen currency applies app-wide. Falls back to a plain number
+  // if the currency code is somehow invalid.
+  const formatMoney = useCallback((amount) => {
+    const value = Number(amount) || 0
+    try {
+      return new Intl.NumberFormat(undefined, { style: 'currency', currency }).format(value)
+    } catch {
+      return value.toFixed(2)
+    }
+  }, [currency])
+
+  // Bare symbol (e.g. "$", "€", "₹") for compact contexts like chart axes.
+  const currencySymbol = (() => {
+    try {
+      return new Intl.NumberFormat(undefined, { style: 'currency', currency })
+        .formatToParts(0)
+        .find(p => p.type === 'currency')?.value ?? '$'
+    } catch {
+      return '$'
+    }
+  })()
 
   return (
     <FamilyContext.Provider value={{
       familyDoc, members, categories: allCategories, monthlyExpenses, budgets,
       currentMonth, setCurrentMonth, loading,
-      addExpense, addCategory, setBudget, createFamily, joinFamily, deleteExpense,
+      currency, currencySymbol, formatMoney,
+      addExpense, addCategory, setBudget, createFamily, joinFamily, deleteExpense, updateCurrency,
     }}>
       {children}
     </FamilyContext.Provider>

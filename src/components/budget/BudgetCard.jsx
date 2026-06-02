@@ -1,6 +1,8 @@
 import { BudgetProgressBar } from './BudgetProgressBar'
+import { useFamily } from '../../contexts/FamilyContext'
 
 export function BudgetCard({ member, spent, limit, percentage }) {
+  const { formatMoney } = useFamily()
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-4">
       <div className="flex items-center gap-3 mb-3">
@@ -13,7 +15,7 @@ export function BudgetCard({ member, spent, limit, percentage }) {
         <div>
           <p className="font-medium text-gray-900 dark:text-white text-sm">{member.displayName}</p>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            ${spent.toFixed(2)} {limit != null ? `/ $${limit.toFixed(2)}` : '— no limit set'}
+            {formatMoney(spent)} {limit != null ? `/ ${formatMoney(limit)}` : '— no limit set'}
           </p>
         </div>
         {limit != null && (

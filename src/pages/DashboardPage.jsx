@@ -11,7 +11,7 @@ import { BudgetCard } from '../components/budget/BudgetCard'
 import { Spinner } from '../components/ui/Spinner'
 
 export function DashboardPage() {
-  const { monthlyExpenses, members, budgets, currentMonth, setCurrentMonth, familyDoc, loading } = useFamily()
+  const { monthlyExpenses, members, budgets, currentMonth, setCurrentMonth, familyDoc, loading, formatMoney } = useFamily()
   const { totalSpent, byMember, byCategory, count, topCategory } = useMonthlyStats(monthlyExpenses)
   const budgetProgress = useBudgetProgress(members, budgets, byMember)
   const [showAdd, setShowAdd] = useState(false)
@@ -41,7 +41,7 @@ export function DashboardPage() {
 
       <div className="grid grid-cols-3 gap-4 mb-6">
         {[
-          { label: 'Total Spent', value: `$${totalSpent.toFixed(2)}` },
+          { label: 'Total Spent', value: formatMoney(totalSpent) },
           { label: 'Transactions', value: count },
           { label: 'Top Category', value: topCategory },
         ].map(({ label, value }) => (

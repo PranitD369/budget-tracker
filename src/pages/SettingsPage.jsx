@@ -4,12 +4,39 @@ import { useAuth } from '../contexts/AuthContext'
 
 const COLORS = ['#f59e0b', '#3b82f6', '#8b5cf6', '#10b981', '#ec4899', '#f97316', '#6366f1', '#6b7280', '#14b8a6', '#ef4444']
 
+const CURRENCIES = [
+  { code: 'USD', label: 'US Dollar ($)' },
+  { code: 'EUR', label: 'Euro (€)' },
+  { code: 'GBP', label: 'British Pound (£)' },
+  { code: 'INR', label: 'Indian Rupee (₹)' },
+  { code: 'JPY', label: 'Japanese Yen (¥)' },
+  { code: 'CNY', label: 'Chinese Yuan (¥)' },
+  { code: 'CAD', label: 'Canadian Dollar (C$)' },
+  { code: 'AUD', label: 'Australian Dollar (A$)' },
+  { code: 'CHF', label: 'Swiss Franc (CHF)' },
+  { code: 'AED', label: 'UAE Dirham (د.إ)' },
+  { code: 'SGD', label: 'Singapore Dollar (S$)' },
+  { code: 'BRL', label: 'Brazilian Real (R$)' },
+  { code: 'ZAR', label: 'South African Rand (R)' },
+  { code: 'MXN', label: 'Mexican Peso (MX$)' },
+]
+
 export function SettingsPage() {
-  const { familyDoc, members, categories, addCategory } = useFamily()
+  const { familyDoc, members, categories, addCategory, currency, updateCurrency } = useFamily()
   const { currentUser } = useAuth()
   const [copied, setCopied] = useState(false)
   const [newCat, setNewCat] = useState({ name: '', icon: '🏷️', color: COLORS[0] })
   const [savingCat, setSavingCat] = useState(false)
+  const [savingCurrency, setSavingCurrency] = useState(false)
+
+  async function handleCurrencyChange(e) {
+    setSavingCurrency(true)
+    try {
+      await updateCurrency(e.target.value)
+    } finally {
+      setSavingCurrency(false)
+    }
+  }
 
   function copyCode() {
     navigator.clipboard.writeText(familyDoc?.inviteCode ?? '')
@@ -51,6 +78,22 @@ export function SettingsPage() {
           </button>
         </div>
         <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">Share this code so family members can join</p>
+      </section>
+
+      {/* Currency */}
+      <section className={sectionClass}>
+        <h2 className="font-semibold text-gray-800 dark:text-gray-200 mb-1">Currency</h2>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">Applies to all amounts across the app for everyone in the family</p>
+        <select
+          value={currency}
+          onChange={handleCurrencyChange}
+          disabled={savingCurrency}
+          className={`${inputClass} w-full max-w-xs`}
+        >
+          {CURRENCIES.map(c => (
+            <option key={c.code} value={c.code}>{c.label}</option>
+          ))}
+        </select>
       </section>
 
       {/* Members */}

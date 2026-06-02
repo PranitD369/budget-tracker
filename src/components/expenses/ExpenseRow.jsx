@@ -4,7 +4,7 @@ import { useFamily } from '../../contexts/FamilyContext'
 import { useAuth } from '../../contexts/AuthContext'
 
 export function ExpenseRow({ expense, onDelete }) {
-  const { categories } = useFamily()
+  const { categories, formatMoney } = useFamily()
   const { currentUser } = useAuth()
   const date = expense.date?.toDate?.() ?? new Date()
 
@@ -25,7 +25,7 @@ export function ExpenseRow({ expense, onDelete }) {
         <p className="text-xs text-gray-400 dark:text-gray-500">{format(date, 'MMM d, h:mm a')}</p>
       </div>
       <div className="flex items-center gap-2 shrink-0">
-        <span className="font-semibold text-gray-900 dark:text-white">${expense.amount.toFixed(2)}</span>
+        <span className="font-semibold text-gray-900 dark:text-white">{formatMoney(expense.amount)}</span>
         {currentUser?.uid === expense.uid && (
           <button
             onClick={() => onDelete(expense.id)}

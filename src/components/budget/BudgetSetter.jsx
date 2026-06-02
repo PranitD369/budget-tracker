@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useFamily } from '../../contexts/FamilyContext'
 
 export function BudgetSetter({ member, currentLimit }) {
-  const { setBudget } = useFamily()
+  const { setBudget, currencySymbol } = useFamily()
   const [value, setValue] = useState(currentLimit ?? '')
   const [saving, setSaving] = useState(false)
 
@@ -22,7 +22,7 @@ export function BudgetSetter({ member, currentLimit }) {
         step="0.01"
         value={value}
         onChange={e => setValue(e.target.value)}
-        placeholder="Set limit…"
+        placeholder={`Set limit (${currencySymbol})…`}
         className="flex-1 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
       />
       <button

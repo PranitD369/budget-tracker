@@ -3,7 +3,7 @@ import { EmptyState } from '../ui/EmptyState'
 import { useFamily } from '../../contexts/FamilyContext'
 
 export function SpendByCategoryChart({ byCategory }) {
-  const { categories } = useFamily()
+  const { categories, formatMoney } = useFamily()
 
   if (byCategory.length === 0) {
     return <EmptyState icon="🥧" title="No data yet" description="Expenses will appear here" />
@@ -20,7 +20,7 @@ export function SpendByCategoryChart({ byCategory }) {
         <Pie data={data} cx="50%" cy="50%" innerRadius={55} outerRadius={85} dataKey="value">
           {data.map((entry, i) => <Cell key={i} fill={entry.color} />)}
         </Pie>
-        <Tooltip formatter={v => `$${v.toFixed(2)}`} />
+        <Tooltip formatter={v => formatMoney(v)} />
         <Legend iconSize={10} wrapperStyle={{ fontSize: 12 }} />
       </PieChart>
     </ResponsiveContainer>

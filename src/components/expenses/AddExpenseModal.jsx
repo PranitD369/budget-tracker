@@ -3,7 +3,7 @@ import { Modal } from '../ui/Modal'
 import { useFamily } from '../../contexts/FamilyContext'
 
 export function AddExpenseModal({ open, onClose }) {
-  const { addExpense, categories } = useFamily()
+  const { addExpense, categories, currencySymbol } = useFamily()
   const [amount, setAmount] = useState('')
   const [category, setCategory] = useState('')
   const [note, setNote] = useState('')
@@ -30,7 +30,7 @@ export function AddExpenseModal({ open, onClose }) {
     <Modal open={open} onClose={onClose} title="Log Expense">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount ($)</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount ({currencySymbol})</label>
           <input
             type="number"
             min="0.01"
