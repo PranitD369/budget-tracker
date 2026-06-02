@@ -7,7 +7,11 @@ export function LoginPage() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!loading && currentUser) navigate('/dashboard')
+    console.log('[LoginPage] loading:', loading, '| currentUser:', currentUser?.email ?? 'null')
+    if (!loading && currentUser) {
+      console.log('[LoginPage] navigating to /dashboard')
+      navigate('/dashboard')
+    }
   }, [currentUser, loading, navigate])
 
   return (

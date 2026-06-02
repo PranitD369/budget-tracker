@@ -12,21 +12,28 @@ export function AuthProvider({ children }) {
   const [authError, setAuthError] = useState(null)
 
   useEffect(() => {
-    // Process redirect result first, then let onAuthStateChanged handle the rest.
-    // Errors here (e.g. unauthorized domain) are surfaced instead of swallowed.
-    getRedirectResult(auth).catch((err) => {
-      setAuthError(err.message)
-      setLoading(false)
-    })
+    console.log('[Auth] init — calling getRedirectResult')
+    getRedirectResult(auth)
+      .then((result) => {
+        console.log('[Auth] getRedirectResult resolved — user:', result?.user?.email ?? 'null (no redirect in progress)')
+      })
+      .catch((err) => {
+        console.error('[Auth] getRedirectResult error:', err.code, err.message)
+        setAuthError(`${err.code}: ${err.message}`)
+        setLoading(false)
+      })
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log('[Auth] onAuthStateChanged fired — user:', user?.email ?? 'null')
       setCurrentUser(user)
       if (user) {
         const ref = doc(db, 'users', user.uid)
         const snap = await getDoc(ref)
         if (snap.exists()) {
+          console.log('[Auth] user profile loaded — familyId:', snap.data().familyId)
           setUserProfile(snap.data())
         } else {
+          console.log('[Auth] new user — creating profile')
           const profile = {
             uid: user.uid,
             displayName: user.displayName,
@@ -41,12 +48,14 @@ export function AuthProvider({ children }) {
       } else {
         setUserProfile(null)
       }
+      console.log('[Auth] setLoading(false)')
       setLoading(false)
     })
     return unsubscribe
   }, [])
 
   async function signInWithGoogle() {
+    console.log('[Auth] signInWithRedirect — starting')
     setAuthError(null)
     await signInWithRedirect(auth, googleProvider)
   }
