@@ -9,6 +9,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        navigateFallbackDenylist: [/^\/__\//],
+      },
       manifest: {
         name: 'Family Budget Tracker',
         short_name: 'BudgetTracker',
