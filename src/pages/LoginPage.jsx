@@ -1,20 +1,14 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { useState } from 'react'
 
 export function LoginPage() {
-  const { signInWithGoogle } = useAuth()
+  const { signInWithGoogle, currentUser, loading } = useAuth()
   const navigate = useNavigate()
-  const [error, setError] = useState('')
 
-  async function handleSignIn() {
-    try {
-      await signInWithGoogle()
-      navigate('/dashboard')
-    } catch {
-      setError('Sign-in failed. Please try again.')
-    }
-  }
+  useEffect(() => {
+    if (!loading && currentUser) navigate('/dashboard')
+  }, [currentUser, loading, navigate])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
@@ -23,7 +17,7 @@ export function LoginPage() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Family Budget Tracker</h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm mb-8">Track spending together, in real time.</p>
         <button
-          onClick={handleSignIn}
+          onClick={signInWithGoogle}
           className="w-full flex items-center justify-center gap-3 border border-gray-300 dark:border-gray-600 rounded-xl py-3 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
           <svg width="18" height="18" viewBox="0 0 18 18">
@@ -34,7 +28,6 @@ export function LoginPage() {
           </svg>
           Continue with Google
         </button>
-        {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
       </div>
     </div>
   )
