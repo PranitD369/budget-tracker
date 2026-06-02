@@ -29,25 +29,25 @@ export function DashboardPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{familyDoc?.name ?? 'Dashboard'}</h1>
-          <div className="flex items-center gap-2 mt-1">
-            <button onClick={() => changeMonth(-1)} className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 px-1">‹</button>
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+          <div className="flex items-center gap-1 mt-1">
+            <button onClick={() => changeMonth(-1)} aria-label="Previous month" className="h-8 w-8 flex items-center justify-center rounded-lg text-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800">‹</button>
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 min-w-32 text-center">
               {format(parseISO(`${currentMonth}-01`), 'MMMM yyyy')}
             </span>
-            <button onClick={() => changeMonth(1)} className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 px-1">›</button>
+            <button onClick={() => changeMonth(1)} aria-label="Next month" className="h-8 w-8 flex items-center justify-center rounded-lg text-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800">›</button>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
         {[
-          { label: 'Total Spent', value: formatMoney(totalSpent) },
-          { label: 'Transactions', value: count },
-          { label: 'Top Category', value: topCategory },
-        ].map(({ label, value }) => (
-          <div key={label} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-4">
+          { label: 'Total Spent', value: formatMoney(totalSpent), wrap: 'col-span-2 sm:col-span-1', size: 'text-2xl sm:text-3xl' },
+          { label: 'Transactions', value: count, wrap: '', size: 'text-xl sm:text-2xl' },
+          { label: 'Top Category', value: topCategory, wrap: '', size: 'text-base sm:text-2xl' },
+        ].map(({ label, value, wrap, size }) => (
+          <div key={label} className={`${wrap} bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-4`}>
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{label}</p>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white truncate">{value}</p>
+            <p className={`${size} font-bold text-gray-900 dark:text-white truncate`}>{value}</p>
           </div>
         ))}
       </div>
@@ -81,8 +81,9 @@ export function DashboardPage() {
 
       <button
         onClick={() => setShowAdd(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-lg text-2xl flex items-center justify-center hover:bg-indigo-700 transition-colors z-30"
-        title="Log expense"
+        style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom))', right: 'calc(1.5rem + env(safe-area-inset-right))' }}
+        className="fixed w-14 h-14 bg-indigo-600 text-white rounded-full shadow-lg text-3xl flex items-center justify-center hover:bg-indigo-700 active:scale-95 transition-all z-30"
+        aria-label="Log expense"
       >
         +
       </button>

@@ -18,7 +18,7 @@ export function Navbar() {
   }
 
   return (
-    <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40">
+    <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 pt-[env(safe-area-inset-top)]">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
         <span className="font-bold text-indigo-600 dark:text-indigo-400 text-lg">💰 BudgetTracker</span>
         <div className="hidden sm:flex gap-1">
