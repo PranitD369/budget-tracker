@@ -1,8 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut, updateProfile } from 'firebase/auth'
+import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth'
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore'
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { auth, db, storage, googleProvider } from '../lib/firebase'
+import { auth, db, googleProvider } from '../lib/firebase'
 
 const AuthContext = createContext(null)
 
@@ -53,20 +52,8 @@ export function AuthProvider({ children }) {
     if (snap.exists()) setUserProfile(snap.data())
   }
 
-  async function uploadProfilePhoto(file) {
-    if (!currentUser) return
-    const storageRef = ref(storage, `profile-photos/${currentUser.uid}`)
-    await uploadBytes(storageRef, file)
-    const photoURL = await getDownloadURL(storageRef)
-    await updateProfile(currentUser, { photoURL })
-    await updateDoc(doc(db, 'users', currentUser.uid), { photoURL })
-    setCurrentUser({ ...currentUser, photoURL })
-    setUserProfile(p => ({ ...p, photoURL }))
-    return photoURL
-  }
-
   return (
-    <AuthContext.Provider value={{ currentUser, userProfile, loading, signInWithGoogle, signOut, refreshUserProfile, uploadProfilePhoto }}>
+    <AuthContext.Provider value={{ currentUser, userProfile, loading, signInWithGoogle, signOut, refreshUserProfile }}>
       {children}
     </AuthContext.Provider>
   )

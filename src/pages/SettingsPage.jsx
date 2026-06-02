@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useFamily } from '../contexts/FamilyContext'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -6,35 +6,15 @@ const COLORS = ['#f59e0b', '#3b82f6', '#8b5cf6', '#10b981', '#ec4899', '#f97316'
 
 export function SettingsPage() {
   const { familyDoc, members, categories, addCategory } = useFamily()
-  const { currentUser, uploadProfilePhoto } = useAuth()
+  const { currentUser } = useAuth()
   const [copied, setCopied] = useState(false)
   const [newCat, setNewCat] = useState({ name: '', icon: '🏷️', color: COLORS[0] })
   const [savingCat, setSavingCat] = useState(false)
-  const [uploadingPhoto, setUploadingPhoto] = useState(false)
-  const [photoError, setPhotoError] = useState('')
-  const fileInputRef = useRef(null)
 
   function copyCode() {
     navigator.clipboard.writeText(familyDoc?.inviteCode ?? '')
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
-  }
-
-  async function handlePhotoChange(e) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (!file.type.startsWith('image/')) { setPhotoError('Please select an image file'); return }
-    if (file.size > 5 * 1024 * 1024) { setPhotoError('Image must be under 5 MB'); return }
-    setPhotoError('')
-    setUploadingPhoto(true)
-    try {
-      await uploadProfilePhoto(file)
-    } catch {
-      setPhotoError('Upload failed. Try again.')
-    } finally {
-      setUploadingPhoto(false)
-      e.target.value = ''
-    }
   }
 
   async function handleAddCategory(e) {
@@ -52,39 +32,6 @@ export function SettingsPage() {
   return (
     <div className="max-w-2xl space-y-8">
       <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Settings</h1>
-
-      {/* Profile photo */}
-      <section className={sectionClass}>
-        <h2 className="font-semibold text-gray-800 dark:text-gray-200 mb-4">Profile Photo</h2>
-        <div className="flex items-center gap-5">
-          <div className="relative">
-            {currentUser?.photoURL
-              ? <img src={currentUser.photoURL} alt="" className="w-20 h-20 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600" />
-              : <div className="w-20 h-20 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-3xl font-bold text-indigo-600 dark:text-indigo-400 ring-2 ring-gray-200 dark:ring-gray-600">
-                  {currentUser?.displayName?.[0] ?? '?'}
-                </div>
-            }
-            {uploadingPhoto && (
-              <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center">
-                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              </div>
-            )}
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">{currentUser?.displayName}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{currentUser?.email}</p>
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploadingPhoto}
-              className="text-sm bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg px-3 py-2 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors disabled:opacity-50"
-            >
-              {uploadingPhoto ? 'Uploading…' : 'Change photo'}
-            </button>
-            <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
-            {photoError && <p className="text-red-500 text-xs mt-2">{photoError}</p>}
-          </div>
-        </div>
-      </section>
 
       {/* Family */}
       <section className={sectionClass}>
