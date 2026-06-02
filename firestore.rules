@@ -1,0 +1,58 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isFamilyMember(familyId) {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/families/$(familyId)/members/$(request.auth.uid));
+    }
+
+    // User profiles — only the owner can read/write
+    match /users/{userId} {
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /families/{familyId} {
+      // Anyone signed in can read a family doc (needed for invite code lookup)
+      // Only members can update family details
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isFamilyMember(familyId);
+      allow delete: if false;
+
+      // Members subcollection
+      match /members/{memberId} {
+        allow read: if isFamilyMember(familyId);
+        allow create: if isSignedIn();
+        allow update, delete: if isFamilyMember(familyId);
+      }
+
+      // Expenses — members can read all, but only write/delete their own
+      match /expenses/{expenseId} {
+        allow read: if isFamilyMember(familyId);
+        allow create: if isFamilyMember(familyId)
+                      && request.resource.data.uid == request.auth.uid
+                      && request.resource.data.amount is number
+                      && request.resource.data.amount > 0;
+        allow delete: if isFamilyMember(familyId)
+                      && resource.data.uid == request.auth.uid;
+        allow update: if false;
+      }
+
+      // Categories — any member can manage
+      match /categories/{categoryId} {
+        allow read, write: if isFamilyMember(familyId);
+      }
+
+      // Budgets — any member can read, any member can set
+      match /budgets/{budgetId} {
+        allow read: if isFamilyMember(familyId);
+        allow write: if isFamilyMember(familyId);
+      }
+    }
+  }
+}
