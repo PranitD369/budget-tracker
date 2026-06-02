@@ -28,46 +28,44 @@ export function DashboardPage() {
     <>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{familyDoc?.name ?? 'Dashboard'}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{familyDoc?.name ?? 'Dashboard'}</h1>
           <div className="flex items-center gap-2 mt-1">
-            <button onClick={() => changeMonth(-1)} className="text-gray-400 hover:text-gray-700 px-1">‹</button>
-            <span className="text-sm font-medium text-gray-600">
+            <button onClick={() => changeMonth(-1)} className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 px-1">‹</button>
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
               {format(parseISO(`${currentMonth}-01`), 'MMMM yyyy')}
             </span>
-            <button onClick={() => changeMonth(1)} className="text-gray-400 hover:text-gray-700 px-1">›</button>
+            <button onClick={() => changeMonth(1)} className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 px-1">›</button>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 col-span-1">
-          <p className="text-xs text-gray-500 mb-1">Total Spent</p>
-          <p className="text-2xl font-bold text-gray-900">${totalSpent.toFixed(2)}</p>
-        </div>
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 col-span-1">
-          <p className="text-xs text-gray-500 mb-1">Transactions</p>
-          <p className="text-2xl font-bold text-gray-900">{count}</p>
-        </div>
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 col-span-1">
-          <p className="text-xs text-gray-500 mb-1">Top Category</p>
-          <p className="text-lg font-bold text-gray-900 truncate">{topCategory}</p>
-        </div>
+        {[
+          { label: 'Total Spent', value: `$${totalSpent.toFixed(2)}` },
+          { label: 'Transactions', value: count },
+          { label: 'Top Category', value: topCategory },
+        ].map(({ label, value }) => (
+          <div key={label} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-4">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{label}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white truncate">{value}</p>
+          </div>
+        ))}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-          <h2 className="text-sm font-semibold text-gray-700 mb-3">Spend by Member</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-4">
+          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Spend by Member</h2>
           <MonthlySpendByMemberChart byMember={byMember} />
         </div>
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-          <h2 className="text-sm font-semibold text-gray-700 mb-3">Spend by Category</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-4">
+          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Spend by Category</h2>
           <SpendByCategoryChart byCategory={byCategory} />
         </div>
       </div>
 
       {budgetProgress.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-sm font-semibold text-gray-700 mb-3">Budget Progress</h2>
+          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Budget Progress</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {budgetProgress.map(({ member, spent, limit, percentage }) => (
               <BudgetCard key={member.uid} member={member} spent={spent} limit={limit} percentage={percentage} />
@@ -77,7 +75,7 @@ export function DashboardPage() {
       )}
 
       <div>
-        <h2 className="text-sm font-semibold text-gray-700 mb-3">Recent Expenses</h2>
+        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Recent Expenses</h2>
         <ExpenseList expenses={monthlyExpenses.slice(0, 5)} />
       </div>
 

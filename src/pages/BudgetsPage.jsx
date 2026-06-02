@@ -11,13 +11,13 @@ export function BudgetsPage() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold text-gray-900 mb-1">Budgets</h1>
-      <p className="text-sm text-gray-500 mb-6">Set monthly spending limits for each family member · {currentMonth}</p>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Budgets</h1>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Set monthly spending limits for each family member · {currentMonth}</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {progress.map(({ member, spent, limit, percentage }) => (
-          <div key={member.uid} className="flex flex-col gap-0">
+          <div key={member.uid}>
             <BudgetCard member={member} spent={spent} limit={limit} percentage={percentage ?? 0} />
-            <div className="bg-white rounded-b-2xl border border-t-0 border-gray-100 px-4 pb-4 -mt-2 pt-2 shadow-sm">
+            <div className="bg-white dark:bg-gray-800 rounded-b-2xl border border-t-0 border-gray-100 dark:border-gray-700 px-4 pb-4 -mt-2 pt-2 shadow-sm">
               <BudgetSetter member={member} currentLimit={limit} />
             </div>
           </div>

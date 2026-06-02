@@ -18,9 +18,9 @@ export function Navbar() {
   }
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
-        <span className="font-bold text-indigo-600 text-lg">💰 BudgetTracker</span>
+        <span className="font-bold text-indigo-600 dark:text-indigo-400 text-lg">💰 BudgetTracker</span>
         <div className="hidden sm:flex gap-1">
           {links.map(l => (
             <NavLink
@@ -28,7 +28,9 @@ export function Navbar() {
               to={l.to}
               className={({ isActive }) =>
                 `px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100'
+                  isActive
+                    ? 'bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`
               }
             >
@@ -42,20 +44,22 @@ export function Navbar() {
           )}
           <button
             onClick={handleSignOut}
-            className="text-sm text-gray-500 hover:text-gray-800"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
           >
             Sign out
           </button>
         </div>
       </div>
-      <div className="flex sm:hidden border-t border-gray-100">
+      <div className="flex sm:hidden border-t border-gray-100 dark:border-gray-700">
         {links.map(l => (
           <NavLink
             key={l.to}
             to={l.to}
             className={({ isActive }) =>
               `flex-1 text-center py-2 text-xs font-medium transition-colors ${
-                isActive ? 'text-indigo-700 border-t-2 border-indigo-600' : 'text-gray-500'
+                isActive
+                  ? 'text-indigo-700 dark:text-indigo-400 border-t-2 border-indigo-600 dark:border-indigo-400'
+                  : 'text-gray-500 dark:text-gray-400'
               }`
             }
           >

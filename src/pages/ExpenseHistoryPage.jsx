@@ -13,9 +13,9 @@ export function ExpenseHistoryPage() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold text-gray-900 mb-4">Expense History</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Expense History</h1>
       <ExpenseFilters filters={filters} onChange={setFilters} />
-      <p className="text-sm text-gray-500 mb-3">{filtered.length} expense{filtered.length !== 1 ? 's' : ''}</p>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">{filtered.length} expense{filtered.length !== 1 ? 's' : ''}</p>
       <ExpenseList expenses={filtered} />
     </>
   )

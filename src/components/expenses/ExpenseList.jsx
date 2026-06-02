@@ -10,7 +10,7 @@ export function ExpenseList({ expenses }) {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-4">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 px-4">
       {expenses.map(e => (
         <ExpenseRow key={e.id} expense={e} onDelete={deleteExpense} />
       ))}

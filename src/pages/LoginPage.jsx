@@ -11,20 +11,20 @@ export function LoginPage() {
     try {
       await signInWithGoogle()
       navigate('/dashboard')
-    } catch (e) {
+    } catch {
       setError('Sign-in failed. Please try again.')
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-lg p-10 w-full max-w-sm text-center">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg p-10 w-full max-w-sm text-center">
         <div className="text-5xl mb-4">💰</div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Family Budget Tracker</h1>
-        <p className="text-gray-500 text-sm mb-8">Track spending together, in real time.</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Family Budget Tracker</h1>
+        <p className="text-gray-500 dark:text-gray-400 text-sm mb-8">Track spending together, in real time.</p>
         <button
           onClick={handleSignIn}
-          className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+          className="w-full flex items-center justify-center gap-3 border border-gray-300 dark:border-gray-600 rounded-xl py-3 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
           <svg width="18" height="18" viewBox="0 0 18 18">
             <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
