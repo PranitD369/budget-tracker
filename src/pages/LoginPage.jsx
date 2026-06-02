@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 
 export function LoginPage() {
-  const { signInWithGoogle, currentUser, loading } = useAuth()
+  const { signInWithGoogle, currentUser, loading, authError } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -28,6 +28,9 @@ export function LoginPage() {
           </svg>
           Continue with Google
         </button>
+        {authError && (
+          <p className="text-red-500 text-xs mt-4 break-words">{authError}</p>
+        )}
       </div>
     </div>
   )

@@ -9,10 +9,15 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null)
   const [userProfile, setUserProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [authError, setAuthError] = useState(null)
 
   useEffect(() => {
-    // Handle the redirect result when returning from Google sign-in
-    getRedirectResult(auth).catch(() => {})
+    // Process redirect result first, then let onAuthStateChanged handle the rest.
+    // Errors here (e.g. unauthorized domain) are surfaced instead of swallowed.
+    getRedirectResult(auth).catch((err) => {
+      setAuthError(err.message)
+      setLoading(false)
+    })
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user)
@@ -42,6 +47,7 @@ export function AuthProvider({ children }) {
   }, [])
 
   async function signInWithGoogle() {
+    setAuthError(null)
     await signInWithRedirect(auth, googleProvider)
   }
 
@@ -56,7 +62,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ currentUser, userProfile, loading, signInWithGoogle, signOut, refreshUserProfile }}>
+    <AuthContext.Provider value={{ currentUser, userProfile, loading, authError, signInWithGoogle, signOut, refreshUserProfile }}>
       {children}
     </AuthContext.Provider>
   )
