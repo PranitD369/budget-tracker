@@ -1,7 +1,13 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { onAuthStateChanged, signInWithRedirect, getRedirectResult, signOut as firebaseSignOut } from 'firebase/auth'
-import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore'
-import { auth, db, googleProvider } from '../lib/firebase'
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signOut as firebaseSignOut,
+} from 'firebase/auth'
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
+import { auth, db } from '../lib/firebase'
 
 const AuthContext = createContext(null)
 
@@ -9,31 +15,16 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null)
   const [userProfile, setUserProfile] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [authError, setAuthError] = useState(null)
 
   useEffect(() => {
-    console.log('[Auth] init — calling getRedirectResult')
-    getRedirectResult(auth)
-      .then((result) => {
-        console.log('[Auth] getRedirectResult resolved — user:', result?.user?.email ?? 'null (no redirect in progress)')
-      })
-      .catch((err) => {
-        console.error('[Auth] getRedirectResult error:', err.code, err.message)
-        setAuthError(`${err.code}: ${err.message}`)
-        setLoading(false)
-      })
-
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log('[Auth] onAuthStateChanged fired — user:', user?.email ?? 'null')
       setCurrentUser(user)
       if (user) {
         const ref = doc(db, 'users', user.uid)
         const snap = await getDoc(ref)
         if (snap.exists()) {
-          console.log('[Auth] user profile loaded — familyId:', snap.data().familyId)
           setUserProfile(snap.data())
         } else {
-          console.log('[Auth] new user — creating profile')
           const profile = {
             uid: user.uid,
             displayName: user.displayName,
@@ -48,16 +39,28 @@ export function AuthProvider({ children }) {
       } else {
         setUserProfile(null)
       }
-      console.log('[Auth] setLoading(false)')
       setLoading(false)
     })
     return unsubscribe
   }, [])
 
-  async function signInWithGoogle() {
-    console.log('[Auth] signInWithRedirect — starting')
-    setAuthError(null)
-    await signInWithRedirect(auth, googleProvider)
+  async function signUp(name, email, password) {
+    const { user } = await createUserWithEmailAndPassword(auth, email, password)
+    await updateProfile(user, { displayName: name })
+    const profile = {
+      uid: user.uid,
+      displayName: name,
+      email: user.email,
+      photoURL: null,
+      familyId: null,
+      createdAt: serverTimestamp(),
+    }
+    await setDoc(doc(db, 'users', user.uid), profile)
+    setUserProfile(profile)
+  }
+
+  async function signIn(email, password) {
+    await signInWithEmailAndPassword(auth, email, password)
   }
 
   async function signOut() {
@@ -71,7 +74,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ currentUser, userProfile, loading, authError, signInWithGoogle, signOut, refreshUserProfile }}>
+    <AuthContext.Provider value={{ currentUser, userProfile, loading, signUp, signIn, signOut, refreshUserProfile }}>
       {children}
     </AuthContext.Provider>
   )
