@@ -18,27 +18,35 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setCurrentUser(user)
-      if (user) {
-        const ref = doc(db, 'users', user.uid)
-        const snap = await getDoc(ref)
-        if (snap.exists()) {
-          setUserProfile(snap.data())
-        } else {
-          const profile = {
-            uid: user.uid,
-            displayName: user.displayName,
-            email: user.email,
-            photoURL: user.photoURL,
-            familyId: null,
-            createdAt: serverTimestamp(),
-          }
-          await setDoc(ref, profile)
-          setUserProfile(profile)
-        }
-      } else {
+      if (!user) {
+        setCurrentUser(null)
         setUserProfile(null)
+        setLoading(false)
+        return
       }
+
+      const ref = doc(db, 'users', user.uid)
+      const snap = await getDoc(ref)
+      let profile
+      if (snap.exists()) {
+        profile = snap.data()
+      } else {
+        profile = {
+          uid: user.uid,
+          displayName: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          familyId: null,
+          createdAt: serverTimestamp(),
+        }
+        await setDoc(ref, profile)
+      }
+
+      // Set all three together so React batches into one render.
+      // If setCurrentUser fired before this, FamilyRoute would see
+      // userProfile=null and redirect to /setup on every login.
+      setCurrentUser(user)
+      setUserProfile(profile)
       setLoading(false)
     })
     return unsubscribe
